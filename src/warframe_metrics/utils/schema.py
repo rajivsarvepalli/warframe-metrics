@@ -1,12 +1,17 @@
-from typing import List, Optional
-from dataclasses import dataclass
+"""Holds the objects required for processing Warframe market data."""
+from __future__ import annotations
+
 import datetime
-import seaborn as sns
-import matplotlib.pyplot as plt, matplotlib.dates as mdates
+from dataclasses import dataclass
+from typing import Iterator
+from typing import List
+from typing import Optional
 
 
 @dataclass
 class ShortItem:
+    """A singular item schema."""
+
     thumb: str
     id: str
     item_name: str
@@ -15,6 +20,8 @@ class ShortItem:
 
 @dataclass
 class Stats:
+    """A closed statistics schema."""
+
     datetime: str
     volume: int
     min_price: float
@@ -33,6 +40,8 @@ class Stats:
 
 @dataclass
 class LiveStats:
+    """A live statistics schema."""
+
     datetime: str
     volume: int
     min_price: float
@@ -47,7 +56,10 @@ class LiveStats:
 
 
 class ItemStats(object):
-    def __init__(self, items, stats):
+    """A object to process and hold item,statistics pairs."""
+
+    def __init__(self, items: List[ShortItem], stats: List[Stat]) -> None:
+        """Create an ItemStats object."""
         item_stats = {}
         new_items = {}
         name_items = {}
@@ -65,21 +77,28 @@ class ItemStats(object):
         self.items = new_items
         self.name_items = name_items
 
-    def get_stats(self, id):
+    def get_stats(self, id: str) -> Stat:
+        """Get statistics from item id."""
         return self.item_stats[id]
 
-    def get_item_by_id(self, id: str):
+    def get_item_by_id(self, id: str) -> ShortItem:
+        """Get item from item id."""
         return self.items[id]
 
     def get_item(self, name: str) -> ShortItem:
+        """Get item from item name."""
         return self.name_items[name]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
+        """Iterator over the dictionary of item ids to statistics."""
         return iter(self.item_stats.items())
 
 
 class LiveStat(object):
+    """A object to process and hold live statistics."""
+
     def __init__(self, item_name: str, buy: bool = False) -> None:
+        """Create an LiveStat object."""
         self.item_name = item_name
         self.buy = buy
         self.max_prices = []
@@ -104,6 +123,7 @@ class LiveStat(object):
         moving_avg: Optional[float],
         mod_rank: Optional[int] = None,
     ) -> None:
+        """Add live statistics."""
         if mod_rank:
             self.mod_ranks.append(mod_rank)
         self.volumes.append(volume)
@@ -121,7 +141,10 @@ class LiveStat(object):
 
 
 class Stat(object):
+    """A object to process and hold live and closed statistics."""
+
     def __init__(self, item_name: str) -> None:
+        """Create an Stat object."""
         self.item_name = item_name
         self.dates = []
         self.volumes = []
@@ -153,8 +176,9 @@ class Stat(object):
         donch_top: float,
         donch_bot: float,
         median: float,
-        mod_rank=None,
+        mod_rank: Optional[int] = None,
     ) -> None:
+        """Add closed statistics."""
         if mod_rank:
             self.mod_ranks.append(mod_rank)
         self.volumes.append(volume)
@@ -187,7 +211,8 @@ class Stat(object):
         moving_avg: Optional[float],
         mod_rank: Optional[int] = None,
         buy: bool = False,
-    ):
+    ) -> None:
+        """Add live statistics."""
         if buy:
             self.live_stat_buy.add_stat(
                 str_date,
@@ -213,7 +238,12 @@ class Stat(object):
                 mod_rank=mod_rank,
             )
 
-    def plot_stat(self, stat_to_plot):
+    def plot_stat(self, stat_to_plot: str) -> None:
+        """Helper function to plot statistics."""
+        import matplotlib.dates as mdates
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
         if "live__" in stat_to_plot:
             stat_to_plot = stat_to_plot.replace("live__", "")
             stat = getattr(self.live_stat_sell, stat_to_plot)
@@ -227,7 +257,12 @@ class Stat(object):
         plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=10))
         plt.show()
 
-    def plot_stats(self, stats_to_plot):
+    def plot_stats(self, stats_to_plot: str) -> None:
+        """Helper function to plot multiple statistics."""
+        import matplotlib.dates as mdates
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
         final_ylabel = ""
         for stat_to_plot in stats_to_plot:
             if "live__" in stat_to_plot:
@@ -245,8 +280,17 @@ class Stat(object):
         plt.show()
 
     def get_live_stats(self, stat_name: str, buy: bool = False) -> List:
+        """Get the live statistics."""
         if buy:
             stat = getattr(self.live_stat_buy, stat_name)
         else:
             stat = getattr(self.live_stat_sell, stat_name)
         return stat
+
+    # merge two stat objects
+    def merge(self, other: Stat) -> None:
+        """Merge two Stat object togther based on dates."""
+        if other.item_name != self.item_name:
+            raise ValueError("Merging stats for different items.")
+        for _ in self.dates:
+            pass

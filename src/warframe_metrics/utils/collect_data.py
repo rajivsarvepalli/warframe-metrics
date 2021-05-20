@@ -1,10 +1,18 @@
-from typing import Type, List, Dict
-import requests
-from .schema import LiveStats, Stat, Stats
+"""Holds the utils required for processing Warframe market data."""
+from typing import Dict
+from typing import List
+from typing import Type
+
 import desert
+import requests
+
+from .schema import LiveStats
+from .schema import Stat
+from .schema import Stats
 
 
 def from_url(url: str) -> Dict:
+    """Gets json response from url."""
     resp = requests.get(url=url)
     resp_json = resp.json()
     return resp_json
@@ -19,6 +27,7 @@ def collect_data(resp_json: Dict, accesses: List[str]) -> Dict:
 
 
 def to_class(cls: Type, data: List[Dict]) -> List[Type]:
+    """Collects json response into dataclass using desert."""
     all_data = []
     for d in data:
         desert_cls = desert.schema(cls)
@@ -26,7 +35,10 @@ def to_class(cls: Type, data: List[Dict]) -> List[Type]:
     return all_data
 
 
-def to_stats(stats_closed: List[Stats], stats_live: List[LiveStats], item_name: str) -> Stat:
+def to_stats(
+    stats_closed: List[Stats], stats_live: List[LiveStats], item_name: str
+) -> Stat:
+    """Collects statistics into Stat object."""
     stat = Stat(item_name)
     for st in stats_closed:
         stat.add_stat(
