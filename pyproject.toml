@@ -56,7 +56,7 @@ source = ["warframe_metrics"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 100
+fail_under = 0
 
 [tool.pytest.ini_options]
 requests_mock_case_sensitive=false

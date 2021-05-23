@@ -9,13 +9,12 @@ import nox_poetry.patch
 from nox.sessions import Session
 
 package = "warframe_metrics"
-python_versions = ["3.9", "3.8", "3.7"]
+python_versions = ["3.8", "3.7"]
 nox.options.sessions = (
     "pre-commit",
     "safety",
     "tests",
     "typeguard",
-    "xdoctest",
     "docs-build",
 )
 
@@ -145,7 +144,7 @@ def coverage(session: Session) -> None:
 def typeguard(session: Session) -> None:
     """Runtime type checking using Typeguard."""
     session.install(".")
-    session.install("pytest", "typeguard", "pygments")
+    session.install("pytest", "typeguard", "pygments", "requests-mock")
     session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
 
 

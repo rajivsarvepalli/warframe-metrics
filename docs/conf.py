@@ -19,9 +19,9 @@ version = "0.2.2"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx.ext.linkcode",
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
+    "sphinx.ext.autosummary",
 ]
 html_static_path = ["_static"]
 copybutton_prompt_text = r">>> |\$ |\.\.\. "
@@ -45,8 +45,12 @@ html_css_files = [
     "css/pandas.css",
 ]
 
-# credit to https://www.freepik.com/
-html_favicon = "_static/alchemy.svg"
+html_favicon = "_static/warframe_logo.jpg"
+
+autosummary_generate = True  # Turn on sphinx.ext.autosummary
+
+# Add any paths that contain templates here, relative to this directory.
+templates_path = ["_templates"]
 
 
 def linkcode_resolve(domain: str, info: Dict) -> str:

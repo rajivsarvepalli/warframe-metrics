@@ -3,11 +3,13 @@
 <p align="center">Analysis tool for warframe market.</p>
 <p align="center">
     <a href="https://pypi.org/project/warframe-metrics/"><img src="https://img.shields.io/pypi/v/warframe-metrics.svg"/></a>
+    <a href="https://warframe-metrics.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/warframe-metrics/badge/?version=latest"/></a>
 
 </p>
 <p align="center">
 <a href="https://codecov.io/gh/rajivsarvepalli/warframe-metrics"><img src="https://codecov.io/gh/rajivsarvepalli/warframe-metrics/branch/master/graph/badge.svg"/></a>
 <a href="https://github.com/rajivsarvepalli/warframe-metrics/actions?workflow=Tests"><img src="https://github.com/rajivsarvepalli/warframe-metrics/workflows/Tests/badge.svg"/></a>
+<a href="https://pypi.org/project/warframe-metrics/"><img src="https://img.shields.io/pypi/pyversions/warframe-metrics.svg"/></a>
 </p>
 <br/><br/>
 
@@ -30,7 +32,7 @@ You can install `warframe-metrics` using pip::
 
 ## 📤 Credit
 
-All credit goes to https://warframe.market/ and their creators for enabling this project.
+All credit goes to https://warframe.market/ and their creators for enabling this project and the data used within it.
 
 ## ⚙ Using
 

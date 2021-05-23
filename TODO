@@ -1,4 +1,0 @@
-- implement to_stats in utils/collect_data
-- implement generate_names in market/prime
-- implement prime_ranking in market/prime
-- tests for prime's ranking thingy

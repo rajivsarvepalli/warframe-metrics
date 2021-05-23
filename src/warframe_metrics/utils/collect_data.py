@@ -1,7 +1,8 @@
 """Holds the utils required for processing Warframe market data."""
+from typing import Any
 from typing import Dict
 from typing import List
-from typing import Type
+from typing import Union
 
 import desert
 import requests
@@ -11,14 +12,14 @@ from .schema import Stat
 from .schema import Stats
 
 
-def from_url(url: str) -> Dict:
+def from_url(url: str) -> Any:
     """Gets json response from url."""
     resp = requests.get(url=url)
     resp_json = resp.json()
     return resp_json
 
 
-def collect_data(resp_json: Dict, accesses: List[str]) -> Dict:
+def collect_data(resp_json: Dict, accesses: List[str]) -> Union[Dict, List]:
     """Collect data from url using requests."""
     resp_final = resp_json
     for acc in accesses:
@@ -26,7 +27,7 @@ def collect_data(resp_json: Dict, accesses: List[str]) -> Dict:
     return resp_final
 
 
-def to_class(cls: Type, data: List[Dict]) -> List[Type]:
+def to_class(cls: Any, data: List[Dict]) -> List[object]:
     """Collects json response into dataclass using desert."""
     all_data = []
     for d in data:

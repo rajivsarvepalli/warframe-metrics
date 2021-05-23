@@ -2,10 +2,51 @@
 from __future__ import annotations
 
 import datetime
+from dataclasses import asdict
 from dataclasses import dataclass
+from json import dumps
+from json import loads
+from typing import Any
+from typing import Dict
 from typing import Iterator
 from typing import List
 from typing import Optional
+from typing import Type
+from typing import Union
+
+
+def to_json(obj: Union[Stat, ItemStats, LiveStat]) -> str:
+    """Dumps Stat, ItemStats, LiveStat into json string."""
+    json_rep = obj.to_json()
+    json_rep_str = dumps(json_rep, default=json_serial)
+    return json_rep_str
+
+
+def from_json(cls: Type, json_rep_str: str) -> Union[Stat, ItemStats, LiveStat]:
+    """Loads Stat, ItemStats, LiveStat from json string."""
+    json_rep = loads(json_rep_str, object_hook=date_hook)
+    obj = cls.from_json(json_rep)
+    return obj
+
+
+def json_serial(obj: Any) -> int:
+    """JSON serializer for objects not serializable by default json code."""
+    if isinstance(obj, (datetime.datetime, datetime.date)):
+        return int(obj.timestamp() * 1000)
+    raise TypeError("Type %s not serializable" % type(obj))
+
+
+def date_hook(json_dict: Dict) -> Dict:
+    """Date hook for reading values from json string."""
+    for (key, value) in json_dict.items():
+        if key == "dates":
+            dates = []
+            for v in value:
+                dates.append(
+                    datetime.datetime.fromtimestamp(v / 1000, tz=datetime.timezone.utc)
+                )
+            json_dict[key] = dates
+    return json_dict
 
 
 @dataclass
@@ -93,6 +134,27 @@ class ItemStats(object):
         """Iterator over the dictionary of item ids to statistics."""
         return iter(self.item_stats.items())
 
+    def to_json(self) -> Dict:
+        """The object to json format."""
+        items = []
+        stats = []
+        for it, stat in self.item_stats.items():
+            items.append(asdict(self.get_item_by_id(it)))
+            stats.append(stat.to_json())
+        return {"items": items, "statistics": stats}
+
+    @classmethod
+    def from_json(cls: Type, json_data: Dict) -> ItemStats:
+        """The object from a json format."""
+        items = json_data["items"]
+        stats = json_data["statistics"]
+        item_objs = []
+        stat_objs = []
+        for it, st in zip(items, stats):
+            item_objs.append(ShortItem(**it))
+            stat_objs.append(Stat.from_json(st))
+        return cls(item_objs, stat_objs)
+
 
 class LiveStat(object):
     """A object to process and hold live statistics."""
@@ -139,6 +201,19 @@ class LiveStat(object):
         self.dates.append(date)
         self.wa_prices.append(wa_price)
 
+    def to_json(self) -> Dict:
+        """The object to json format."""
+        json_data = self.__dict__.copy()
+        return json_data
+
+    @classmethod
+    def from_json(cls: Type, json_data: Dict) -> LiveStat:
+        """The object from a json format."""
+        live_stat = cls(json_data["item_name"], json_data["buy"])
+        for key in json_data:
+            setattr(live_stat, key, json_data[key])
+        return live_stat
+
 
 class Stat(object):
     """A object to process and hold live and closed statistics."""
@@ -179,7 +254,7 @@ class Stat(object):
         mod_rank: Optional[int] = None,
     ) -> None:
         """Add closed statistics."""
-        if mod_rank:
+        if mod_rank is not None or len(self.mod_ranks) > 0:
             self.mod_ranks.append(mod_rank)
         self.volumes.append(volume)
         self.medians.append(median)
@@ -191,8 +266,7 @@ class Stat(object):
         self.open_prices.append(open_price)
         self.closed_prices.append(closed_price)
         self.wa_prices.append(wa_price)
-        self.avg_prices.append(avg_price)
-        if moving_avg:
+        if moving_avg is not None:
             self.moving_avgs.append(moving_avg)
         else:
             self.moving_avgs.append(0)
@@ -294,3 +368,22 @@ class Stat(object):
             raise ValueError("Merging stats for different items.")
         for _ in self.dates:
             pass
+
+    def to_json(self) -> Dict:
+        """The object to json format."""
+        json_data = self.__dict__.copy()
+        json_data["live_stat_buy"] = self.live_stat_buy.to_json()
+        json_data["live_stat_sell"] = self.live_stat_sell.to_json()
+        return json_data
+
+    @classmethod
+    def from_json(cls: Type, json_data: Dict) -> Stat:
+        """The object from a json format."""
+        stat = cls(json_data["item_name"])
+        for key in json_data:
+            if key == "live_stat_buy" or key == "live_stat_sell":
+                loaded_live_stat = LiveStat.from_json(json_data[key])
+                setattr(stat, key, loaded_live_stat)
+            else:
+                setattr(stat, key, json_data[key])
+        return stat
