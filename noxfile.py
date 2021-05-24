@@ -5,7 +5,6 @@ from pathlib import Path
 from textwrap import dedent
 
 import nox
-import nox_poetry
 from nox.sessions import Session
 from nox_poetry import session
 
@@ -98,7 +97,7 @@ def precommit(session: Session) -> None:
 @session(python="3.8")
 def safety(session: Session) -> None:
     """Scan dependencies for insecure packages."""
-    requirements = nox_poetry.export_requirements(session)
+    requirements = session.poetry.export_requirements()
     session.install("safety")
     session.run("safety", "check", f"--file={requirements}", "--bare")
 

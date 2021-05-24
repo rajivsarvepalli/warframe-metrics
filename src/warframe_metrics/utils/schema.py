@@ -14,6 +14,8 @@ from typing import Optional
 from typing import Type
 from typing import Union
 
+import pandas as pd
+
 
 def to_json(obj: Union[Stat, ItemStats, LiveStat]) -> str:
     """Dumps Stat, ItemStats, LiveStat into json string."""
@@ -361,13 +363,75 @@ class Stat(object):
             stat = getattr(self.live_stat_sell, stat_name)
         return stat
 
-    # merge two stat objects
-    def merge(self, other: Stat) -> None:
-        """Merge two Stat object togther based on dates."""
+    def merge(self, other: Stat, newer: bool = True) -> None:
+        """Merge two `Stat` object togther based on dates.
+
+        Combine two `Stat` objecst using the dates replaced to be only
+        year, month, and day. These replaced dates are then used to merge
+        the two stat objects. The idea is to combined new collected data
+        with old stored data. This merge is done in-place and does not
+        return a new Stat `object`. Please note that this function is not
+        highly optimized and expects one statistics to be collected each
+        days. The live statistics are simply set to the newer `Stat` object
+        chosen based on the `newer` parameter.
+
+        Args:
+            other: The `Stat` to merge with.
+            newer: A boolean representing whether the parameter `other`
+                represents a newer Stat object or an older one. The newer
+                Stat object's values are taken when there are overlapping dates.
+
+        Raises:
+            ValueError: If the `Stat` objects have different item names.
+        """
         if other.item_name != self.item_name:
             raise ValueError("Merging stats for different items.")
-        for _ in self.dates:
-            pass
+        self_dates = [
+            d.replace(minute=0, hour=0, second=0, microsecond=0) for d in self.dates
+        ]
+        other_dates = [
+            d.replace(minute=0, hour=0, second=0, microsecond=0) for d in other.dates
+        ]
+        other_stat = other.__dict__.copy()
+        stat = self.__dict__.copy()
+        stat.pop("live_stat_buy")
+        stat.pop("live_stat_sell")
+        other_stat.pop("live_stat_buy")
+        other_stat.pop("live_stat_sell")
+        other_stat["date_key"] = other_dates
+        stat["date_key"] = self_dates
+        other_stat_df = pd.DataFrame(other_stat)
+        stat_df = pd.DataFrame(stat)
+        merged = pd.merge(
+            stat_df,
+            other_stat_df,
+            left_on="date_key",
+            right_on="date_key",
+            how="outer",
+            suffixes=("_left", "_right"),
+        )
+        stat.pop("date_key")
+        main_attr = "dates_right"
+        sec_attr = "dates_left"
+        if newer is False:
+            main_attr = "dates_left"
+            sec_attr = "dates_right"
+        merged.loc[merged[main_attr].isna(), main_attr] = merged[sec_attr]
+        merged = merged.sort_values(by=[main_attr])
+        for attr in stat:
+            main_attr = attr + "_right"
+            sec_attr = attr + "_left"
+            if newer is False:
+                main_attr = attr + "_left"
+                sec_attr = attr + "_right"
+            merged.loc[merged[main_attr].isna(), main_attr] = merged[sec_attr]
+            values = merged[main_attr].to_list()
+            if "dates" in main_attr:
+                values = [v.to_pydatetime() for v in values]
+            setattr(self, attr, values)
+        if newer:
+            self.live_stat_buy = other.live_stat_buy
+            self.live_stat_sell = other.live_stat_sell
 
     def to_json(self) -> Dict:
         """The object to json format."""
