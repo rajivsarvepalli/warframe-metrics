@@ -3,7 +3,7 @@
 <p align="center">Analysis tool for warframe market.</p>
 <p align="center">
     <a href="https://pypi.org/project/warframe-metrics/"><img src="https://img.shields.io/pypi/v/warframe-metrics.svg"/></a>
-    <a href="https://warframe-metrics.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/warframe-metrics/badge/?version=latest"/></a>
+    <a href="https://warframe-metrics.readthedocs.io/en/latest/"><img src="https://readthedocs.org/projects/warframe-metrics/badge/?version=latest"/></a>
 
 </p>
 <p align="center">
@@ -38,15 +38,20 @@ All credit goes to https://warframe.market/ and their creators for enabling this
 
 Coming soon...
 
-## 📕 License
+# 👷 Contributing
 
-Distributed under the terms of the MIT\_ license,
-_warframe-metrics_ is free and open source software.
+Contributions are welcome. To learn more, see the [Contributor Guide][].
 
-## 💥 Issues
+# 📕 License
 
-If you encounter any issues or problems,
-please `file an issue`\_ along with a detailed description.
+Distributed under the terms of the [MIT][] license, _warframe-metrics_ is
+free and open source software.
 
-.. \_MIT: http://opensource.org/licenses/MIT
-.. \_file an issue: https://github.com/rajivsarvepalli/warframe-metrics/issues
+# 💥 Issues
+
+If you encounter any issues or problems, please [file an issue][] along
+with a detailed description.
+
+[contributor guide]: https://warframe-metrics.readthedocs.io/en/latest/contributor_guide/
+[mit]: http://opensource.org/licenses/MIT
+[file an issue]: https://github.com/rajivsarvepalli/warframe-metrics/issues

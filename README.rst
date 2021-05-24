@@ -5,7 +5,7 @@
     <p align="center">Analysis tool for warframe market.</p>
     <p align="center">
         <a href="https://pypi.org/project/warframe-metrics/"><img src="https://img.shields.io/pypi/v/warframe-metrics.svg"/></a>
-        <a href="https://warframe-metrics.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/warframe-metrics/badge/?version=latest"/></a>
+        <a href="https://warframe-metrics.readthedocs.io/en/latest/"><img src="https://readthedocs.org/projects/warframe-metrics/badge/?version=latest"/></a>
 
 
     </p>
@@ -53,6 +53,11 @@ All credit goes to https://warframe.market/ and their creators for enabling this
 
 Coming soon...
 
+👷 Contributing
+------------
+
+Contributions are welcome.
+To learn more, see the `Contributor Guide`_.
 
 
 📕 License
@@ -68,5 +73,6 @@ Distributed under the terms of the MIT_ license,
 If you encounter any issues or problems,
 please `file an issue`_ along with a detailed description.
 
+.. _Contributor Guide: https://warframe-metrics.readthedocs.io/en/latest/contributor_guide/
 .. _MIT: http://opensource.org/licenses/MIT
 .. _file an issue: https://github.com/rajivsarvepalli/warframe-metrics/issues
