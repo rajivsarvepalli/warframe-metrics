@@ -15,7 +15,7 @@ import warframe_metrics
 project = "warframe-metrics"
 author = "Rajiv Sarvepalli"
 copyright = f"{datetime.now().year}, {author}"
-version = "0.2.2"
+version = "0.1.0"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",

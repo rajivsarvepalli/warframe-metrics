@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "warframe-metrics"
-version = "0.1.0"
+version = "0.1.1"
 license = "MIT"
 description = "Warframe market metrics package."
 authors = ["Rajiv Sarvepalli <rajiv@sarvepalli.net>"]
