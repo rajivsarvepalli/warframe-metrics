@@ -7,7 +7,7 @@
 
 </p>
 <p align="center">
-<a href="https://codecov.io/gh/rajivsarvepalli/warframe-metrics"><img src="https://codecov.io/gh/rajivsarvepalli/warframe-metrics/branch/master/graph/badge.svg"/></a>
+<a href="https://codecov.io/gh/rajivsarvepalli/warframe-metrics"><img src="https://codecov.io/gh/rajivsarvepalli/warframe-metrics/branch/main/graph/badge.svg?token=32T6Ok0H3X"/></a>
 <a href="https://github.com/rajivsarvepalli/warframe-metrics/actions?workflow=Tests"><img src="https://github.com/rajivsarvepalli/warframe-metrics/workflows/Tests/badge.svg"/></a>
 <a href="https://pypi.org/project/warframe-metrics/"><img src="https://img.shields.io/pypi/pyversions/warframe-metrics.svg"/></a>
 </p>
