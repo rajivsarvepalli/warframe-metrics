@@ -4,11 +4,13 @@ from contextlib import nullcontext
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Union
 
 import desert
 import requests
 from alive_progress import alive_bar
+from marshmallow.utils import EXCLUDE
 
 from .constants import ITEMS_URL
 from .constants import STATS_URL
@@ -19,7 +21,11 @@ from .schema import Stat
 from .schema import Stats
 
 
-def market_data(filters: Dict[str, Any], progress_bar: bool = False) -> ItemStats:
+def market_data(
+    filters: Optional[Dict[str, Any]] = None,
+    progress_bar: bool = False,
+    timeout: float = 1.0,
+) -> ItemStats:
     """Collect data from warframe market API.
 
     Collects information from the warframe market API. Waits 1 second every
@@ -27,12 +33,17 @@ def market_data(filters: Dict[str, Any], progress_bar: bool = False) -> ItemStat
 
     Args:
         filters: A dictionary of `ShortItem` attributes to values that will
-            be used to filter the items for which statistics will be collected.
+            be used to filter the items for which statistics will be collected. If
+            no dictionary is provided, then the default dict of None filters nothing.
         progress_bar: Whether to use a progress bar or not.
+        timeout: The number of seconds to wait every ten items in order to reduce
+            the load on warframe.market API.
 
     Returns:
         An object of `ItemStats` that contains all the collected data.
     """
+    if filters is None:
+        filters = {}
     json_data = from_url(ITEMS_URL)
     json_data = collect_data(json_data, ["payload", "items"])
     items = to_class(ShortItem, json_data)
@@ -59,7 +70,7 @@ def market_data(filters: Dict[str, Any], progress_bar: bool = False) -> ItemStat
                 prime_stats.append(stat)
                 prime_items.append(i)
                 if j % 10 == 0:
-                    time.sleep(1)
+                    time.sleep(timeout)
             if type(cm) is not nullcontext:
                 bar()
 
@@ -86,7 +97,7 @@ def to_class(cls: Any, data: List[Dict]) -> List[object]:
     all_data = []
     for d in data:
         desert_cls = desert.schema(cls)
-        all_data.append(desert_cls.load(d))
+        all_data.append(desert_cls.load(d, unknown=EXCLUDE))
     return all_data
 
 

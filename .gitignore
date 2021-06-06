@@ -35,7 +35,6 @@ htmlcov
 /.python-version
 /.pytype/
 
-
 /src/*.egg-info/
 __pycache__/
 
@@ -58,3 +57,6 @@ output/*/index.html
 # IDEs
 /.idea
 .venv
+
+# Specific Files
+all_data.p

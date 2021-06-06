@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import datetime
+import warnings
 from dataclasses import asdict
 from dataclasses import dataclass
 from json import dumps
@@ -112,7 +113,8 @@ class ItemStats(object):
             if i.id in new_items:
                 raise ValueError("items has duplicate ids with id: " + i.id)
             if i.item_name in name_items:
-                raise ValueError("items has duplicate names with name: " + i.item_name)
+                i.item_name = i.item_name + "2"
+                warnings.warn("items has duplicate names with name: " + i.item_name)
             item_stats[i.id] = s
             new_items[i.id] = i
             name_items[i.item_name] = i
@@ -386,12 +388,25 @@ class Stat(object):
         """
         if other.item_name != self.item_name:
             raise ValueError("Merging stats for different items.")
-        self_dates = [
-            d.replace(minute=0, hour=0, second=0, microsecond=0) for d in self.dates
-        ]
-        other_dates = [
-            d.replace(minute=0, hour=0, second=0, microsecond=0) for d in other.dates
-        ]
+        if len(self.mod_ranks) > 0:
+
+            self_dates = []
+            other_dates = []
+            for d1, d2, r1, r2 in zip(
+                self.dates, other.dates, self.mod_ranks, other.mod_ranks
+            ):
+                d1 = d1.replace(minute=0, hour=0, second=0, microsecond=0)
+                d2 = d2.replace(minute=0, hour=0, second=0, microsecond=0)
+                self_dates.append(str(d1) + str(r1))
+                other_dates.append(str(d2) + str(r2))
+        else:
+            self_dates = [
+                d.replace(minute=0, hour=0, second=0, microsecond=0) for d in self.dates
+            ]
+            other_dates = [
+                d.replace(minute=0, hour=0, second=0, microsecond=0)
+                for d in other.dates
+            ]
         other_stat = other.__dict__.copy()
         stat = self.__dict__.copy()
         stat.pop("live_stat_buy")

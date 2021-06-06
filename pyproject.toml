@@ -1,10 +1,29 @@
 [tool.poetry]
 name = "warframe-metrics"
-version = "0.1.1"
+version = "0.1.2"
 license = "MIT"
 description = "Warframe market metrics package."
 authors = ["Rajiv Sarvepalli <rajiv@sarvepalli.net>"]
 readme = "READMEPYPI.md"
+homepage = "https://github.com/rajivsarvepalli/warframe-metrics"
+repository = "https://github.com/rajivsarvepalli/warframe-metrics"
+documentation = "https://warframe-metrics.readthedocs.io"
+
+classifiers=[
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Development Status :: 2 - Pre-Alpha",
+]
+keywords = ["warframe", "warframe market", "warframe market data"]
+
+[tool.poetry.urls]
+Changelog = "https://github.com/rajivsarvepalli/warframe-metrics/releases"
 
 [tool.poetry.dependencies]
 python = "^3.7.1"

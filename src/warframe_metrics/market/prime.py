@@ -83,7 +83,7 @@ def generate_names(prime_items: ItemStats, vault_csv: str) -> pd.DataFrame:
     return pd.DataFrame(new_rows)
 
 
-def collect_prime_data(progress_bar: bool = False) -> ItemStats:
+def collect_prime_data(progress_bar: bool = False, timeout: float = 1.0) -> ItemStats:
     """Collects primes from warframe market. Waits 1 second per 10 items collected."""
     json_data = from_url(ITEMS_URL)
     json_data = collect_data(json_data, ["payload", "items"])
@@ -110,7 +110,7 @@ def collect_prime_data(progress_bar: bool = False) -> ItemStats:
                 prime_stats.append(stat)
                 prime_items.append(i)
                 if j % 10 == 0:
-                    time.sleep(1)
+                    time.sleep(timeout)
             if type(cm) is not nullcontext:
                 bar()
 
