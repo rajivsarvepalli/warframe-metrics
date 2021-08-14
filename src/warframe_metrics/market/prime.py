@@ -124,6 +124,8 @@ def find_index(
     num_days: Optional[int] = None,
 ) -> int:
     """Finds the index within the given timeframe from `Stat` object."""
+    if len(stat.dates) == 0:
+        return 0, 0
     dates = stat.dates
     min_date = min(unvault_date, datetime.datetime.now(tz=timezone.utc) - time_delta)
     i = j = 0

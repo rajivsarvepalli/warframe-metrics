@@ -392,13 +392,12 @@ class Stat(object):
 
             self_dates = []
             other_dates = []
-            for d1, d2, r1, r2 in zip(
-                self.dates, other.dates, self.mod_ranks, other.mod_ranks
-            ):
-                d1 = d1.replace(minute=0, hour=0, second=0, microsecond=0)
-                d2 = d2.replace(minute=0, hour=0, second=0, microsecond=0)
-                self_dates.append(str(d1) + str(r1))
-                other_dates.append(str(d2) + str(r2))
+            for d1, r1 in zip(self.dates, self.mod_ranks):
+                d1 = d1.replace(minute=r1, hour=0, second=0, microsecond=0)
+                self_dates.append(d1)
+            for d2, r2 in zip(other.dates, other.mod_ranks):
+                d2 = d2.replace(minute=r2, hour=0, second=0, microsecond=0)
+                other_dates.append(d2)
         else:
             self_dates = [
                 d.replace(minute=0, hour=0, second=0, microsecond=0) for d in self.dates
@@ -411,6 +410,11 @@ class Stat(object):
         stat = self.__dict__.copy()
         stat.pop("live_stat_buy")
         stat.pop("live_stat_sell")
+        stat.pop("item_name")
+        other_stat.pop("item_name")
+        if len(self.mod_ranks) == 0:
+            stat.pop("mod_ranks")
+            other_stat.pop("mod_ranks")
         other_stat.pop("live_stat_buy")
         other_stat.pop("live_stat_sell")
         other_stat["date_key"] = other_dates
