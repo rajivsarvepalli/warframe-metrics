@@ -58,7 +58,7 @@ reorder-python-imports = "^2.3.6"
 sphinx-autodoc-typehints = "^1.11.1"
 flake8-rst-docstrings = "^0.0.14"
 pre-commit = "^2.9.3"
-pre-commit-hooks = "^3.4.0"
+pre-commit-hooks = "^4.0.1"
 pytest-mock = "^3.6.1"
 requests-mock = "^1.9.2"
 
