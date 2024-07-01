@@ -17,6 +17,7 @@ from typing import Union
 
 import pandas as pd
 
+from .datetime_utils import hour_minute_second_microsecond
 
 def to_json(obj: Union[Stat, ItemStats, LiveStat]) -> str:
     """Dumps Stat, ItemStats, LiveStat into json string."""
@@ -393,11 +394,18 @@ class Stat(object):
             self_dates = []
             other_dates = []
             for d1, r1 in zip(self.dates, self.mod_ranks):
-                d1 = d1.replace(minute=r1, hour=0, second=0, microsecond=0)
+                d1 = d1.replace(**hour_minute_second_microsecond(datetime.timedelta(minutes=r1)))
                 self_dates.append(d1)
-            for d2, r2 in zip(other.dates, other.mod_ranks):
-                d2 = d2.replace(minute=r2, hour=0, second=0, microsecond=0)
-                other_dates.append(d2)
+
+            if len(other.mod_ranks) > 0:
+                for d2, r2 in zip(other.dates, other.mod_ranks):
+                    d2 = d2.replace(**hour_minute_second_microsecond(datetime.timedelta(minutes=r2)))
+                    other_dates.append(d2)
+            else:
+                other_dates = [
+                    d.replace(minute=0, hour=0, second=0, microsecond=0)
+                    for d in other.dates
+                ]
         else:
             self_dates = [
                 d.replace(minute=0, hour=0, second=0, microsecond=0) for d in self.dates
@@ -415,6 +423,9 @@ class Stat(object):
         if len(self.mod_ranks) == 0:
             stat.pop("mod_ranks")
             other_stat.pop("mod_ranks")
+        else:
+            if len(other.mod_ranks) == 0:
+                other_stat["mod_ranks"] = [0]*len(other.dates)
         other_stat.pop("live_stat_buy")
         other_stat.pop("live_stat_sell")
         other_stat["date_key"] = other_dates
